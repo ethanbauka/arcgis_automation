@@ -33,3 +33,17 @@ sd_filename = service_name + ".sd"
 sd_output_filename = os.path.join(outdir, sd_filename)
 print(sd_output_filename)
 
+aprx = arcpy.mp.ArcGISProject("path to .aprx")
+federated_server_url = "url of federated server"
+sddraft = m.getWebLayerSharingDraft(server_type, "MAP_IMAGE", service_name)
+sddraft.federatedServerUrl = federated_suerver_url
+sddraft.extension.feature.isEnabled = True
+sddraft.extension.feature.featureCapabilities = "Query,Create,Update,Delete,Extract,Editing"
+sddraft.overwriteExistingService = True
+
+sddraft.exportToSDDraft(sddraft_output_filename)
+arcpy.server.StageService(sddraft_output_filename, sd_output_filename, 102)
+arcpy.server.UploadServiceDefintion(sd_output_filename, federated_server_url)
+
+service.service.start()
+print("View Map Service:", privateUrl)
